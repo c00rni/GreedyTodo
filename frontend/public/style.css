@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#root {
+    --color-primary: #333;
+    --text-secondary: #1f1f1f;
+    --primary-color: #319795;
+    --primary-color-light: #4FD1C5;
+    --secondary-color: #E53E3E;
+    --secondary-color-light: #F56565;
+    --base-font-size: 62.5%;
+    --reglar-text-size: 1.8rem;
+    --heading-size: 4rem;
+    --font-regular-fallback: sans-serif;
+    --font-regular: "Roboto", var(--font-regular-fallback);
+    --font-heading-fallback: "Montserrat";
+    --font-heading: "Epilogue", var(--font-heading-fallback);
+    min-height: 100vh;
+}
+
+html {
+    font-size: var(--base-font-size);
+    scroll-behavior: smooth;
+    font-family: var(--font-regular);
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+p, span, li{
+    font-size: var(--reglar-text-size);
+}
+
+h1 {
+    font-family: var(--font-heading);
+    font-size: var(--heading-size);
+}
+
+a {
+    text-decoration: none;
+}
