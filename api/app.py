@@ -6,10 +6,12 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import get_jwt
+import flask_cors
 
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+flask_cors.CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
 app.config['JWT_BLACKLIST_ENABLED'] = True
@@ -45,15 +47,15 @@ def insert_db(query, args=()):
     return rv[0] if rv else None
 
 @app.route('/api/login', methods=["POST"])
+@flask_cors.cross_origin()
 def authentification():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-    hashed_password = bcrypt.generate_password_hash (password).decode('utf-8')
-    user_id = query_db('select user_id from users where username = ? and password = ?', [username, hashed_password], one=True)
-    if user_id == None:
+    user = query_db('select user_id, password from users where username = ?', [username], one=True)
+    if not user or not bcrypt.check_password_hash(user["password"], password):
         return jsonify({"error": "Bad username or password"}), 401
 
-    access_token = create_access_token(identity=user_id[0])
+    access_token = create_access_token(identity=user["user_id"])
     return jsonify(access_token=access_token)
 
 @jwt.token_in_blocklist_loader
@@ -76,7 +78,7 @@ def createUser():
     if username and password:
         if query_db('select * from users where username = ?;', [username], one=True):
             return jsonify({"error": "Username already exist"}), 401
-        hashed_password = bcrypt.generate_password_hash (password).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         insert_db('INSERT INTO users (username, password) VALUES (?, ?);', [username, hashed_password])
         return jsonify({"success":"User created."}), 200
     return jsonify({"error": "One or both arguments username and password are missing"}), 401
