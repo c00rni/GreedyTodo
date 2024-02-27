@@ -12,7 +12,7 @@ CREATE TABLE tasks (
     task_id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT,
-    creation_date DATETIME NOT NULL,
+    creation_date DATETIME DEFAULT (datetime('now','localtime')),
     user_id INTEGER,
     personne_id INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
