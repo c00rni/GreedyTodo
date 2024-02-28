@@ -10,7 +10,22 @@ import {
   } from '@chakra-ui/react'
 import DeleteButton from './DeleteButton';
 
-function PriorityList() {
+function PriorityList({priorities, fetchPersonnes}) {
+
+    const detelePersonne = async (id) => {
+        await fetch(`http://localhost:5000/api/personnes/${id}`, {
+            mode: 'cors',
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+            }
+        }).then(response => response.json()).then(data => {
+            fetchPersonnes()
+        });
+    }
+
     return (
     <>
         <TableContainer>
@@ -23,38 +38,23 @@ function PriorityList() {
                 </Tr>
                 </Thead>
                 <Tbody>
-                <Tr>
-                    <Td>1</Td>
-                    <Td>
-                        Pouyanne
-                    </Td>
-                    <Td >
-                        <Flex>
-                            <Spacer />
-                            <DeleteButton />
-                        </Flex>
-                    </Td>
-                </Tr>
-                <Tr>
-                    <Td>2</Td>
-                    <Td>Morgan</Td>
-                    <Td>
-                        <Flex>
-                            <Spacer />
-                            <DeleteButton />
-                        </Flex>
-                    </Td>
-                </Tr>
-                <Tr>
-                    <Td>3</Td>
-                    <Td>Clautaire</Td>
-                    <Td>
-                        <Flex>
-                            <Spacer />
-                            <DeleteButton />
-                        </Flex>
-                    </Td>
-                </Tr>
+                    {priorities ? priorities.map((priorities, index) => {
+                        return (
+                            <Tr key={priorities.personne_id}>
+                                <Td>{index + 1}</Td>
+                                <Td>
+                                    {priorities.fullname}
+                                </Td>
+                                <Td >
+                                    <Flex>
+                                        <Spacer />
+                                        <DeleteButton id={priorities.personne_id} action={detelePersonne}/>
+                                    </Flex>
+                                </Td>
+                            </Tr>
+                        )
+                    }): "You dont have any assign personn."}
+
                 </Tbody>
             </Table>
         </TableContainer>
