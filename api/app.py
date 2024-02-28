@@ -127,15 +127,15 @@ def personnes():
 @jwt_required()
 def createPersonnes():
     current_user_id = get_jwt_identity()
-    full_name = request.json.get("fullname", None)
+    full_name = request.json.get("fullName", None)
     description = request.json.get("description", None)
-    priority_score = request.json.get("priority_score", None)
-    if full_name and priority_score and isinstance(full_name, str) and isinstance(priority_score, int):
-        insert_db('INSERT INTO personnes (fullname, description, priority_score, user_id) VALUES (? ? ? ?);', [full_name, description, priority_score, current_user_id])
+    priority_score = request.json.get("priorityRank", None)
+    if full_name and priority_score != None and type(full_name) == type("") and type(priority_score) == type(0):
+        insert_db('INSERT INTO personnes (fullname, description, priority_score, user_id) VALUES (?, ?, ?, ?);', [full_name, description, priority_score, current_user_id])
 
         return jsonify({"success":"Task deleted."}), 200
     else:
-        return jsonify({"success":"Arguments are missing or are in the wrong type."}), 200
+        return jsonify({"error":"Arguments are missing or are in the wrong type."}), 401
 
 @app.route("/api/personnes/<personne_id>", methods=["DELETE"])
 @jwt_required()

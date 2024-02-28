@@ -80,7 +80,7 @@ function CreateTask({cancel, priorities, fetchTasks}) {
                     isLoading={props.isSubmitting}
                     type='submit'
                     >
-                    Submit
+                    Create
                     </Button>
                 </ButtonGroup>
             </Flex>
