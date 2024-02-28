@@ -73,10 +73,10 @@ function LandingPage() {
                     <TabPanels>
                         <TabPanel>
                             {!isAddingTask ? <Button mb={4} onClick={addTask} colorScheme='teal'>Add task</Button> : <CreateTask priorities={personnes} fetchTasks={fetchTasks} cancel={addTask}/>}
-                            <TaskList tasks={tasks} setTasks={{setTasks}}/>
+                            <TaskList tasks={tasks} fetchTasks={fetchTasks}/>
                         </TabPanel>
                         <TabPanel>
-                            {!isAddingPriority ? <Button mb={4} onClick={addPriority} colorScheme='teal'>Add priority</Button> : <CreatePriority cancel={addPriority}/>}
+                            {!isAddingPriority ? <Button mb={4} onClick={addPriority} colorScheme='teal'>Add priority</Button> : <CreatePriority priorities={personnes} fetchPersonnes={fetchPersonnes} cancel={addPriority}/>}
                             <PriorityList />
                         </TabPanel>
                     </TabPanels>

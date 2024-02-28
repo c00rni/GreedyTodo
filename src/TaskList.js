@@ -9,7 +9,6 @@ import {
     TableContainer,
   } from '@chakra-ui/react'
 import DeleteButton from './DeleteButton';
-import { useEffect } from "react";
 
 function TaskList({tasks, fetchTasks}) {
 
