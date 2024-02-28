@@ -9,8 +9,24 @@ import {
     TableContainer,
   } from '@chakra-ui/react'
 import DeleteButton from './DeleteButton';
+import { useEffect } from "react";
 
-function TaskList() {
+function TaskList({tasks, fetchTasks}) {
+
+    const deteleTask = async (id) => {
+        await fetch(`http://localhost:5000/api/tasks/${id}`, {
+            mode: 'cors',
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+            }
+        }).then(response => response.json()).then(data => {
+            fetchTasks()
+        });
+    }
+
     return (
     <>
         <TableContainer>
@@ -23,38 +39,22 @@ function TaskList() {
                 </Tr>
                 </Thead>
                 <Tbody>
-                <Tr>
-                    <Td>1</Td>
-                    <Td>
-                        Make Pouyanne proud
-                    </Td>
-                    <Td >
-                        <Flex>
-                            <Spacer />
-                            <DeleteButton />
-                        </Flex>
-                    </Td>
-                </Tr>
-                <Tr>
-                    <Td>2</Td>
-                    <Td>FInish Morgan assigment</Td>
-                    <Td>
-                        <Flex>
-                            <Spacer />
-                            <DeleteButton />
-                        </Flex>
-                    </Td>
-                </Tr>
-                <Tr>
-                    <Td>3</Td>
-                    <Td>Finish france PLT</Td>
-                    <Td>
-                        <Flex>
-                            <Spacer />
-                            <DeleteButton />
-                        </Flex>
-                    </Td>
-                </Tr>
+                    {tasks ? tasks.map((task,index) => {
+
+                            return (<Tr key={task.task_id}>
+                                <Td>{index + 1}</Td>
+                                <Td>
+                                    {task.title}
+                                </Td>
+                                <Td >
+                                    <Flex>
+                                        <Spacer />
+                                        <DeleteButton id={task.task_id} action={deteleTask}/>
+                                    </Flex>
+                                </Td>
+                            </Tr>)
+                    }): "You dont have any task yet." }
+
                 </Tbody>
             </Table>
         </TableContainer>

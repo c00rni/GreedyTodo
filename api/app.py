@@ -47,7 +47,6 @@ def insert_db(query, args=()):
     return rv[0] if rv else None
 
 @app.route('/api/login', methods=["POST"])
-@flask_cors.cross_origin()
 def authentification():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
@@ -58,10 +57,10 @@ def authentification():
     access_token = create_access_token(identity=user["user_id"])
     return jsonify(access_token=access_token)
 
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blacklist(decrypted_token):
-    jti = decrypted_token['jti']
-    return jti in blacklist
+# @jwt.token_in_blocklist_loader
+# def check_if_token_in_blacklist(decrypted_token):
+#     jti = decrypted_token['jti']
+#     return jti in blacklist
 
 @app.route('/logout', methods=['DELETE'])
 @jwt_required
@@ -122,7 +121,7 @@ def personnes():
     rows = []
     for personne in query_db('select * from personnes where user_id = ? order by fullname;', [current_user_id]):
         rows.append({"personne_id": personne["personne_id"], "fullname": personne["fullname"], "description": personne["description"], "priority_score": personne["priority_score"]})
-    return jsonify(tasks=rows), 200
+    return jsonify(personnes=rows), 200
 
 @app.route("/api/personnes", methods=["POST"])
 @jwt_required()

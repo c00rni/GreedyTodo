@@ -5,45 +5,52 @@ import {
     FormErrorMessage,
   } from '@chakra-ui/react'
 import { Field, Form, Formik, } from 'formik';
+import { object, string} from 'yup';
 
-function CreateTask({cancel}) {
-    function validateName(value) {
-      let error
-      if (!value) {
-        error = 'Name is required'
-      } else if (value.toLowerCase() !== 'naruto') {
-        error = "Jeez! You're not a fan 😱"
-      }
-      return error
-    }
+function CreateTask({cancel, priorities, fetchTasks}) {
 
-    const cancelCreation = () =>{
+    const cancelCreation = () => {
         cancel()
     }
 
     return (
       <Formik
-        initialValues={{ title: '', description: '', priority: null}}
-        onSubmit={(values, actions) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2))
-            actions.setSubmitting(false)
-          }, 1000)
-        }}
+        initialValues={{ title: '', description: '', priority: ''}}
+        validationSchema = {object({
+          title: string().required("Required"),
+          description: string(),
+          priority: string().optional()
+      })}
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          await fetch("http://localhost:5000/api/tasks", {
+              mode: 'cors',
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+              },
+              body: JSON.stringify(values)
+          }).then(response => response.json()).then(() => {
+              fetchTasks()
+          });
+          setSubmitting(false);
+          resetForm();
+      }}
       >
         {(props) => (
           <Form>
             <Heading>Add a task</Heading>
-            <Field name='title' validate={validateName}>
+            <Field name='title'>
               {({ field, form }) => (
-                <FormControl isInvalid={form.errors.title && form.touched.tilte}>
+                <FormControl isInvalid={form.errors.title && form.touched.title}>
                   <FormLabel>Title</FormLabel>
                   <Input {...field} placeholder='Title of the task' />
                   <FormErrorMessage>{form.errors.title}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-            <Field name='description' validate={validateName}>
+            <Field name='description'>
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.description && form.touched.description}>
                   <FormLabel>Description</FormLabel>
@@ -52,14 +59,12 @@ function CreateTask({cancel}) {
                 </FormControl>
               )}
             </Field>
-            <Field name='priority' validate={validateName}>
+            <Field name='priority'>
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.priority && form.touched.priority}>
                   <FormLabel>Priority</FormLabel>
-                    <Select placeholder='Select priority'>
-                        <option value='person 1'>Personne 1</option>
-                        <option value='person 2'>Personne 2</option>
-                        <option value='person 3'>Personne 3</option>
+                    <Select {...field} placeholder='Select priority'>
+                        {priorities.map((priority) => <option key={priority.personne_id} value={priority.fullname}>{priority.fullname}</option>)}
                     </Select>
                   <FormErrorMessage>{form.errors.priority}</FormErrorMessage>
                 </FormControl>
