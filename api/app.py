@@ -62,7 +62,7 @@ def authentification():
 #     jti = decrypted_token['jti']
 #     return jti in blacklist
 
-@app.route('/logout', methods=['DELETE'])
+@app.route('/logout', methods=["DELETE"])
 @jwt_required
 def logout():
     jti = get_jwt()['jti']
@@ -74,7 +74,8 @@ def logout():
 def createUser():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-    if username and password:
+    secondPassword = request.json.get("secondPassword", None)
+    if username and password and (password == secondPassword):
         if query_db('select * from users where username = ?;', [username], one=True):
             return jsonify({"error": "Username already exist"}), 401
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')

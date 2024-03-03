@@ -1,5 +1,5 @@
-import { Input, VStack, InputRightElement, InputGroup, Button, HStack, AbsoluteCenter, Center} from "@chakra-ui/react"
-import { useNavigate } from 'react-router-dom';
+import { Input, VStack, InputRightElement, InputGroup, Button, HStack, AbsoluteCenter, Center, useToast} from "@chakra-ui/react"
+import  { Navigate, useNavigate } from 'react-router-dom'
 import {
     FormControl,
     FormLabel,
@@ -17,8 +17,9 @@ function LoginPage() {
     const [isSubmitting, setIsSumitting] = useState(false);
     const [completedForm, setCompletedForm] = useState(false);
     const [values, setValues] = useState({ username: '', password:'' })
-    const isAuthenticated = localStorage.getItem("accessToken") ? true : false;
+    const isAuthenticated = localStorage.getItem("accessToken") ? false : true;
     const navigate = useNavigate();
+    const toast = useToast()
 
     const handleClick = (event) => {
         setShow(!show)
@@ -59,7 +60,16 @@ function LoginPage() {
                     }).then(response => response.json()).then(data => {
                         if (data.access_token){
                             localStorage.setItem("accessToken", data.access_token);
-                            navigate("/mylist");
+                            navigate('/mylist');
+                        }
+                        else {
+                            toast({
+                                title: 'Connection failed',
+                                description: "Username and password does not match",
+                                status: 'error',
+                                duration: 4000,
+                                isClosable: true,
+                              });
                         }
                     });
                     setIsSumitting(false)
@@ -98,7 +108,7 @@ function LoginPage() {
                             )}
                         </Field>
                         <HStack justifyContent="end" mt={5}>
-                            <ChakraLink as={ReactRouterLink} to='/a/signup' textAlign="end">
+                            <ChakraLink as={ReactRouterLink} to='/signup' textAlign="end">
                                 Sign up
                             </ChakraLink>
                             <Button
@@ -116,7 +126,7 @@ function LoginPage() {
             </Center>
 
         </VStack>
-    </AbsoluteCenter> : navigate("/mylist")
+    </AbsoluteCenter> : <Navigate to='/mylist' />
         }
     </>
     );

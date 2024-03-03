@@ -1,7 +1,16 @@
 import { Flex, Spacer, Box, Button, ButtonGroup, Container} from '@chakra-ui/react';
 import Logo from './Logo';
+import { useNavigate } from 'react-router-dom';
+
 
 function Header() {
+    const navigate = useNavigate();
+
+    const logout = async () => {
+        localStorage.removeItem("accessToken");
+        navigate("/");
+    }
+
     return (
     <>
         <Container maxW="container.xl">
@@ -11,7 +20,7 @@ function Header() {
                     </Box>
                     <Spacer />
                     <ButtonGroup gap='2'>
-                        <Button colorScheme='red'>Log out</Button>
+                        <Button onClick={logout} colorScheme='red'>Log out</Button>
                     </ButtonGroup>
             </Flex>
         </Container>

@@ -6,6 +6,7 @@ import TaskList from "./TaskList";
 import CreatePriority from "./CreatePriority";
 import PriorityList from "./PriorityList";
 import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 function LandingPage() {
 
@@ -13,6 +14,7 @@ function LandingPage() {
     const [isAddingPriority, setIsAddingPriority] = useState(false)
     const [personnes, setPersonnes] = useState([])
     const [tasks, setTasks] = useState([])
+    const isAuthenticated = localStorage.getItem("accessToken") ? true : false;
 
     const addTask = () => {
         setIsAddingPriority(false)
@@ -62,27 +64,31 @@ function LandingPage() {
 
     return (
     <>
-        <Header/>
-        <Flex justifyContent="space-around">
-            <Center maxW="900px" mt={50} w="100%">
-                <Tabs isFitted variant='enclosed'  w="100%">
-                    <TabList mb='1em'>
-                        <Tab>Todo List</Tab>
-                        <Tab>Priority list</Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel>
-                            {!isAddingTask ? <Button mb={4} onClick={addTask} colorScheme='teal'>Add task</Button> : <CreateTask priorities={personnes} fetchTasks={fetchTasks} cancel={addTask}/>}
-                            <TaskList tasks={tasks} fetchTasks={fetchTasks}/>
-                        </TabPanel>
-                        <TabPanel>
-                            {!isAddingPriority ? <Button mb={4} onClick={addPriority} colorScheme='teal'>Add priority</Button> : <CreatePriority fetchPersonnes={fetchPersonnes} cancel={addPriority}/>}
-                            <PriorityList priorities={personnes} fetchPersonnes={fetchPersonnes}/>
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
-            </Center>
-        </Flex>
+        {isAuthenticated ?
+        <>
+            <Header/>
+            <Flex justifyContent="space-around">
+                <Center maxW="900px" mt={50} w="100%">
+                    <Tabs isFitted variant='enclosed'  w="100%">
+                        <TabList mb='1em'>
+                            <Tab>Todo List</Tab>
+                            <Tab>Priority list</Tab>
+                        </TabList>
+                        <TabPanels>
+                            <TabPanel>
+                                {!isAddingTask ? <Button mb={4} onClick={addTask} colorScheme='teal'>Add task</Button> : <CreateTask priorities={personnes} fetchTasks={fetchTasks} cancel={addTask}/>}
+                                <TaskList tasks={tasks} fetchTasks={fetchTasks}/>
+                            </TabPanel>
+                            <TabPanel>
+                                {!isAddingPriority ? <Button mb={4} onClick={addPriority} colorScheme='teal'>Add priority</Button> : <CreatePriority fetchPersonnes={fetchPersonnes} cancel={addPriority}/>}
+                                <PriorityList priorities={personnes} fetchPersonnes={fetchPersonnes}/>
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+                </Center>
+            </Flex>
+        </> : <Navigate to='/' />}
+
     </>
     );
   }
